@@ -101,6 +101,9 @@ class Game
 
       if playable?(played_card)
         self.stacks.fetch(played_card.suit) << played_card
+        if played_card.number == 5
+          self.hints = [self.hints + 1, MAX_HINTS].min
+        end
       else
         self.discard_deck << played_card
         self.fuses -= 1

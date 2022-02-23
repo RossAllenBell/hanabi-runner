@@ -10,4 +10,8 @@ class Agent
     self.player.hand
   end
 
+  def produce_move
+    raise 'not implemented'
+  end
+
 end

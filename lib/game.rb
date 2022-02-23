@@ -22,10 +22,9 @@ class Game
 
   end
 
-  attr_accessor :start_time, :players, :draw_deck, :discard_deck, :stacks, :hints, :fuses, :dealt_cards, :current_turn
+  attr_accessor :players, :draw_deck, :discard_deck, :stacks, :hints, :fuses, :dealt_cards, :current_turn
 
   def initialize(agent_class: AlwaysDiscardsFirstCard)
-    self.start_time = Time.now.to_f
     self.players = (0..3).to_a.map do
       Player.new(agent_class: agent_class)
     end

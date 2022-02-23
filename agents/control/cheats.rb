@@ -17,8 +17,8 @@ class Cheats < Agent
   end
 
   def game
-    @_game ||= ObjectSpace.each_object(Game).to_a.max_by do |game|
-      game.start_time
+    @_game ||= ObjectSpace.each_object(Game).to_a.detect do |game|
+      game.players.include?(self.player)
     end
   end
 

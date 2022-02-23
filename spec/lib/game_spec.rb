@@ -78,6 +78,19 @@ describe Game do
 
     end
 
+    context 'all agents can play' do
+      ObjectSpace.each_object(Class).select { |klass| klass < Agent }.each do |agent_class|
+        context "agent: #{agent_class.name}" do
+          subject {Game.new(agent_class: agent_class).deal!.play!}
+
+          it 'can run' do
+            expect(subject.score).not_to be_nil
+            expect(subject.game_over?).to eq(true)
+          end
+        end
+      end
+    end
+
   end
 
 end

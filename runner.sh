@@ -1,1 +1,1 @@
-bundle exec ruby runner/runner.rb
+bundle exec ruby runner/runner.rb "$@"

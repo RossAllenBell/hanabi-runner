@@ -1,5 +1,9 @@
 class Agent
 
+  def self.control?
+    false
+  end
+
   attr_accessor :player
 
   def initialize(player:)

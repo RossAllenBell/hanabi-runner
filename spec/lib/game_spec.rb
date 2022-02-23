@@ -93,4 +93,62 @@ describe Game do
 
   end
 
+  describe :playable? do
+
+    subject {Game.new}
+
+    it 'can play a 1' do
+      expect(subject.playable?(Card.new(suit: 'white', number: 1))).to eq(true)
+    end
+
+    it 'can not play a 2' do
+      expect(subject.playable?(Card.new(suit: 'white', number: 2))).to eq(false)
+    end
+
+    it 'can not play a 3' do
+      expect(subject.playable?(Card.new(suit: 'white', number: 3))).to eq(false)
+    end
+
+    context 'a 1 has been played' do
+
+      before(:each) do
+        subject.stacks.fetch('white') << Card.new(suit: 'white', number: 1)
+      end
+
+      it 'can not play a 1' do
+        expect(subject.playable?(Card.new(suit: 'white', number: 1))).to eq(false)
+      end
+
+      it 'can play a 2' do
+        expect(subject.playable?(Card.new(suit: 'white', number: 2))).to eq(true)
+      end
+
+      it 'can not play a 3' do
+        expect(subject.playable?(Card.new(suit: 'white', number: 3))).to eq(false)
+      end
+
+      context 'a 2 has been played' do
+
+        before(:each) do
+          subject.stacks.fetch('white') << Card.new(suit: 'white', number: 2)
+        end
+
+        it 'can not play a 1' do
+          expect(subject.playable?(Card.new(suit: 'white', number: 1))).to eq(false)
+        end
+
+        it 'can not play a 2' do
+          expect(subject.playable?(Card.new(suit: 'white', number: 2))).to eq(false)
+        end
+
+        it 'can not play a 3' do
+          expect(subject.playable?(Card.new(suit: 'white', number: 3))).to eq(true)
+        end
+
+      end
+
+    end
+
+  end
+
 end

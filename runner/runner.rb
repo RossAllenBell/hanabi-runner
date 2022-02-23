@@ -9,6 +9,15 @@ agent_classes = ObjectSpace.each_object(Class).select { |klass| klass < Agent }.
 
 puts "Agent classes: #{agent_classes.map(&:name).join(', ')}"
 
+DEBUG = !!ARGV.delete('--debug')
+
+if ARGV.size > 0
+  puts "Limiting to agents: #{ARGV.join(', ')}"
+  agent_classes = agent_classes.select do |agent_class|
+    ARGV.include?(agent_class.name)
+  end
+end
+
 puts 'Running games'
 rows = agent_classes.map do |agent_class|
   start_time = Time.now.to_f
@@ -17,7 +26,9 @@ rows = agent_classes.map do |agent_class|
   end.sum / 1000.0
   run_time = Time.now.to_f - start_time
   print '.'
-  [agent_class.name, average_score, run_time]
+  class_name = agent_class.name
+  class_name += ' (Control)' if agent_class.control?
+  [class_name, average_score, run_time]
 end.sort_by do |d|
   d[1]
 end.reverse.map do |d|

@@ -60,11 +60,15 @@ class Game
   end
 
   def play!
+    puts "New game" if DEBUG
+
     while !self.game_over?
       current_player = self.players[self.current_turn]
       handle_move(player: current_player, move: current_player.produce_move)
       self.current_turn = (self.current_turn + 1) % self.players.size
     end
+
+    puts "Game over: #{self.score}" if DEBUG
 
     return self
   end
@@ -78,14 +82,23 @@ class Game
   end
 
   def handle_move(player:, move:)
+    puts "Player: #{player}, #{move}" if DEBUG
+
     if move.is_a?(Move::Discard)
       player.hand.delete(move.card) || raise(move.card)
-      self.discard_deck << self.dealt_cards[move.card] || raise(move.card)
+      card = self.dealt_cards[move.card] || raise(move.card)
+
+      puts card if DEBUG
+
+      self.discard_deck << card
       self.hints = [self.hints + 1, MAX_HINTS].min
       deal_card_to_player!(player)
     elsif move.is_a?(Move::Play)
       player.hand.delete(move.card) || raise(move.card)
       played_card = self.dealt_cards[move.card] || raise(move.card)
+
+      puts played_card if DEBUG
+
       if playable?(played_card)
         self.stacks.fetch(played_card.suit) << played_card
       else
@@ -94,7 +107,7 @@ class Game
       end
       deal_card_to_player!(player)
     else
-      raise move.class
+      raise move.class.name
     end
   end
 
@@ -105,7 +118,7 @@ class Game
   def playable?(card)
     current_suit_card = self.stacks.fetch(card.suit).last
     return true if current_suit_card.nil? && card.number == 1
-    return current_suit_card&.number = card.number - 1
+    return current_suit_card&.number == card.number - 1
   end
 
 end

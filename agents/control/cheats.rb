@@ -1,5 +1,9 @@
 class Cheats < Agent
 
+  def self.control?
+    true
+  end
+
   def produce_move
     card = self.hand.detect do |face_down_card|
       game.playable?(game.dealt_cards.fetch(face_down_card))

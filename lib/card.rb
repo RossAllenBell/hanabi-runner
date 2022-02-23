@@ -25,6 +25,10 @@ class Card
     self.number = number
   end
 
+  def to_s
+    "{Card: #{suit}, #{number}}"
+  end
+
   class FaceDown
 
   end

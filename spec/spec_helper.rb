@@ -1,3 +1,4 @@
+DEBUG = false
 Dir['./lib/**/*.rb'].each {|file| require file }
 Dir['./agents/**/*.rb'].each {|file| require file }
 

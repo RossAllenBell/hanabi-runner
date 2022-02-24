@@ -26,7 +26,7 @@ class Game
 
   def initialize(agent_class: AlwaysDiscardsFirstCard)
     self.players = (0..3).to_a.map do
-      Player.new(agent_class: agent_class)
+      Player.new(game: self, agent_class: agent_class)
     end
     self.draw_deck = Game.new_deck
     self.discard_deck = []
@@ -57,6 +57,10 @@ class Game
     new_face_down_card = Card::FaceDown.new
     self.dealt_cards[new_face_down_card] = card
     player.receive_card!(new_face_down_card)
+
+    if self.draw_deck.empty?
+      @player_who_took_last_card = player
+    end
   end
 
   def play!
@@ -75,7 +79,7 @@ class Game
 
   def game_over?
     return true if self.fuses <= 0
-    return true if self.draw_deck.empty?
+    return true if @player_who_took_last_card == self.players[self.current_turn]
     return true if self.score == 25
 
     return false
@@ -109,6 +113,23 @@ class Game
         self.fuses -= 1
       end
       deal_card_to_player!(player)
+    elsif move.is_a?(Move::Hint)
+      raise 'out of hints' if self.hints == 0
+
+      agent = move.agent
+      agent.hand.each do |face_down_card|
+        if move.suit == self.dealt_cards[face_down_card].suit
+          puts self.dealt_cards[face_down_card] if DEBUG
+
+          agent.player.receive_hint!(Hint.new(card: face_down_card, suit: move.suit))
+        elsif move.number == self.dealt_cards[face_down_card].number
+          puts self.dealt_cards[face_down_card] if DEBUG
+
+          agent.player.receive_hint!(Hint.new(card: face_down_card, number: move.number))
+        end
+      end
+
+      self.hints -= 1
     else
       raise move.class.name
     end
@@ -122,6 +143,10 @@ class Game
     current_suit_card = self.stacks.fetch(card.suit).last
     return true if current_suit_card.nil? && card.number == 1
     return current_suit_card&.number == card.number - 1
+  end
+
+  def out_of_hints?
+    return self.hints <= 0
   end
 
 end

@@ -6,7 +6,7 @@ class Card
     Red = 'red'
     Blue = 'blue'
     Green = 'green'
-    All = Suits.constants(false).map { |c| Suits.const_get c }
+    All = Suits.constants(false).map { |c| Suits.const_get c }.freeze
   end
 
   module Numbers
@@ -15,7 +15,7 @@ class Card
     Three = 3
     Four = 4
     Five = 5
-    All = Numbers.constants(false).map { |c| Numbers.const_get c }
+    All = Numbers.constants(false).map { |c| Numbers.const_get c }.freeze
   end
 
   attr_accessor :suit, :number

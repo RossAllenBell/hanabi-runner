@@ -1,4 +1,22 @@
 require 'terminal-table'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: example.rb [options]"
+
+  opts.on('-d', '--debug', TrueClass, 'Debug mode') do |v|
+    options[:debug] = v
+  end
+
+  opts.on('-a', '--agent AGENT', String, 'Single agent') do |v|
+    options[:agent] = v
+  end
+
+  opts.on('-c', '--count COUNT', Integer, 'Run count') do |v|
+    options[:count] = v
+  end
+end.parse!
 
 puts 'Loading files'
 Dir['./lib/**/*.rb'].each {|file| require file }
@@ -9,21 +27,25 @@ agent_classes = ObjectSpace.each_object(Class).select { |klass| klass < Agent }.
 
 puts "Agent classes: #{agent_classes.map(&:name).join(', ')}"
 
-DEBUG = !!ARGV.delete('--debug')
+DEBUG = options[:debug]
+puts 'Debug enabled' if DEBUG
 
-if ARGV.size > 0
-  puts "Limiting to agents: #{ARGV.join(', ')}"
+COUNT = options[:count] || 1000
+puts "Runs per agent: #{COUNT}"
+
+if !options[:agent].nil?
+  puts "Limiting to agent: #{options[:agent]}"
   agent_classes = agent_classes.select do |agent_class|
-    ARGV.include?(agent_class.name)
+    agent_class.name == options[:agent]
   end
 end
 
 puts 'Running games'
 rows = agent_classes.map do |agent_class|
   start_time = Time.now.to_f
-  average_score = (0..999).to_a.map do
+  average_score = (0..(COUNT-1)).to_a.map do
     Game.new(agent_class: agent_class).deal!.play!.score
-  end.sum / 1000.0
+  end.sum / COUNT.to_f
   run_time = Time.now.to_f - start_time
   print '.'
   class_name = agent_class.name

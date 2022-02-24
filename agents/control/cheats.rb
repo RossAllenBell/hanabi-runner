@@ -22,7 +22,7 @@ class Cheats < Agent
 
   def game
     @_game ||= ObjectSpace.each_object(Game).to_a.detect do |game|
-      game.players.include?(self.player)
+      game.players.map(&:agent).include?(self)
     end
   end
 

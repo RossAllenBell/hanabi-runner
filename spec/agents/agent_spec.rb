@@ -28,7 +28,7 @@ describe Agent do
         player.receive_hint!(Hint.new(card: face_down_card, suit: visible_card.suit))
       end
 
-      it 'knows nothing about suits' do
+      it 'knows the suit' do
         expect(subject.suits).to eq([visible_card.suit])
       end
 
@@ -36,7 +36,7 @@ describe Agent do
         expect(Card::Numbers::All - subject.numbers).to be_empty
       end
 
-      it 'considers the knowledge empty' do
+      it 'considers the knowledge non-empty' do
         expect(subject).not_to be_empty
       end
 
